@@ -16,6 +16,14 @@
         }
     },
     {
+        "pk": 3,
+        "model": "waffle.flag",
+        "fields": {
+            "name": "course_experience.gdpr",
+            "everyone": false
+	}
+    },
+    {
         "pk": 1,
         "model": "waffle.switch",
         "fields": {
@@ -24,11 +32,11 @@
         }
     },
     {
-        "pk": 3,
-        "model": "waffle.flag",
+        "pk": 2,
+        "model": "waffle.switch",
         "fields": {
-            "name": "course_experience.gdpr",
-            "everyone": false
+            "name": "completion.enable_completion_tracking",
+            "active": true
         }
     }
 ]

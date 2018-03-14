@@ -377,7 +377,7 @@ class TestInstructorGradeReport(InstructorGradeReportTestCase):
         self._verify_cell_data_for_user(verified_user.username, course.id, 'Certificate Eligible', 'Y', num_rows=2)
 
     @ddt.data(
-        (ModuleStoreEnum.Type.mongo, 4),
+        (ModuleStoreEnum.Type.mongo, 2),
         (ModuleStoreEnum.Type.split, 3),
     )
     @ddt.unpack
@@ -409,7 +409,7 @@ class TestInstructorGradeReport(InstructorGradeReportTestCase):
 
         RequestCache.clear_request_cache()
 
-        expected_query_count = 42
+        expected_query_count = 42  # or 39
         with patch('lms.djangoapps.instructor_task.tasks_helper.runner._get_current_task'):
             with check_mongo_calls(mongo_count):
                 with self.assertNumQueries(expected_query_count):
