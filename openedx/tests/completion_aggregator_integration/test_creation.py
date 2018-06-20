@@ -60,8 +60,8 @@ class _BaseTestCase(CompletionWaffleTestMixin, SharedModuleStoreTestCase):
     def assert_expected_values(self, values_map, user=None):
         for item in values_map:
             if values_map[item]:
-                assert self.aggregator_for(item, user=user).possible == values_map[item][1]
-                assert self.aggregator_for(item, user=user).earned == values_map[item][0]
+                agg = self.aggregator_for(item, user=user)
+                self.assertEqual((agg.earned, agg.possible), values_map[item])
             else:
                 with pytest.raises(Aggregator.DoesNotExist):
                     self.aggregator_for(item, user=user)
@@ -105,7 +105,7 @@ class DAGTestCase(_BaseTestCase):
         self.submit_completion_for(self.problems[0], 0.75)
         self.assert_expected_values({
             self.vertical1: (0.75, 5.0),
-            self.vertical2: (),
+            self.vertical2: (0.0, 1.0),
             self.sequential: (0.75, 6.0),
             self.chapter: (0.75, 6.0),
         })
@@ -157,7 +157,7 @@ class DAGTestCase(_BaseTestCase):
 
         self.assert_expected_values({
             self.vertical1: (4.0, 5.0),
-            self.vertical2: (),
+            self.vertical2: (0.0, 1.0),
             self.sequential: (4.0, 6.0),
             self.chapter: (4.0, 6.0),
         }, user=user2)

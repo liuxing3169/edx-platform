@@ -59,7 +59,7 @@ class StubCompletionService(object):
         """
         return {candidate: self._completion_value for candidate in candidates}
 
-    def get_completion_by_viewing_delay_ms(self):
+    def get_complete_on_view_delay_ms(self):
         """
         Return the completion-by-viewing delay in milliseconds.
         """

@@ -26,6 +26,7 @@ git+https://github.com/edx/lettuce.git@7a04591c78ac56dac3eb3e91ca94b15cce844133#
 git+https://github.com/edx/xblock-lti-consumer.git@v1.1.8#egg=lti_consumer-xblock==1.1.8
 git+https://github.com/edx/MongoDBProxy.git@25b99097615bda06bd7cdfe5669ed80dc2a7fed0#egg=MongoDBProxy==0.1.0
 -e .
+-e git+https://github.com/open-craft/openedx-completion-aggregator@cliff/trim-install-requires#egg=openedx-completion-aggregator
 git+https://github.com/edx/edx-ora2.git@2.1.17#egg=ora2==2.1.17
 -e git+https://github.com/dgrtwo/ParsePy.git@7949b9f754d1445eff8e8f20d0e967b9a6420639#egg=parse_rest
 -e git+https://github.com/appliedsec/pygeoip.git@95e69341cebf5a6a9fbf7c4f5439d458898bdc3b#egg=pygeoip
@@ -106,6 +107,7 @@ django-pyfs==2.0
 django-ratelimit-backend==1.1.1
 django-ratelimit==1.1.0
 django-require==1.0.11
+django-rest-framework==0.1.0
 django-rest-swagger==2.2.0
 django-sekizai==0.10.0
 django-ses==0.8.4
@@ -126,7 +128,7 @@ edx-ace==0.1.8
 edx-analytics-data-api-client==0.14.4
 edx-ccx-keys==0.2.1
 edx-celeryutils==0.2.7
-edx-completion==0.1.6
+edx-completion==0.1.7
 edx-django-oauth2-provider==1.2.5
 edx-django-release-util==0.3.1
 edx-django-sites-extensions==2.3.1

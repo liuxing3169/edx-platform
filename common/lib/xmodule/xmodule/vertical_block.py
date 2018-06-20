@@ -86,7 +86,7 @@ class VerticalBlock(SequenceFields, XModuleFields, StudioEditableBlock, XmlParse
         """
         if completion_service is None:
             return 0
-        return completion_service.get_completion_by_viewing_delay_ms()
+        return completion_service.get_complete_on_view_delay_ms()
 
     def student_view(self, context):
         """

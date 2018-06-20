@@ -105,6 +105,7 @@ newrelic                            # New Relic agent for performance monitoring
 nodeenv==1.1.1                      # Utility for managing Node.js environments; we use this for deployments and testing
 numpy==1.6.2                        # Fast numeric array computation, used in some problem types
 oauthlib==2.0.1                     # OAuth specification support for authenticating via LTI or other Open edX services
+-e git+https://github.com/open-craft/openedx-completion-aggregator@cliff/trim-install-requires#egg=openedx-completion-aggregator
 pdfminer                            # Used in shoppingcart for extracting/parsing pdf text
 piexif==1.0.2                       # Exif image metadata manipulation, used in the profile_images app
 Pillow==3.4                         # Image manipulation library; used for course assets, profile images, invoice PDFs, etc.
