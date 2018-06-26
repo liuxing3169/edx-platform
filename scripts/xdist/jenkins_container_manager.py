@@ -22,6 +22,7 @@ class JenkinsContainerManager():
         """
         Spins up jenkins-worker containers.
         """
+        logger.info(security_groups)
         CONTAINER_RUN_TIME_OUT_MINUTES = 10
         MAX_RUN_TASK_RETRIES = 7
 
@@ -128,10 +129,10 @@ if __name__ == "__main__":
     parser.add_argument('--task_name', '-t', default=None,
                         help="Name of the task definition for spinning up workers")
 
-    parser.add_argument('--subnets', '-s', action='append', default=None,
+    parser.add_argument('--subnets', '-s', nargs='+', default=None,
                         help="List of subnets for the containers to exist in")
 
-    parser.add_argument('--security_groups', '-sg', action='append', default=None,
+    parser.add_argument('--security_groups', '-sg', nargs='+', default=None,
                         help="List of security groups to apply to the containers")
 
     parser.add_argument('--public_ip_enabled', choices=['ENABLED', 'DISABLED'],
@@ -141,7 +142,7 @@ if __name__ == "__main__":
                         help="ECS launch type of container. Defaults to FARGATE")
 
     # Terminating containers
-    parser.add_argument('--task_arns', '-arns', action='append', default=None,
+    parser.add_argument('--task_arns', '-arns', nargs='+', default=None,
                         help="Task arns to terminate")
 
     parser.add_argument('--reason', '-r', default="",
@@ -164,3 +165,5 @@ if __name__ == "__main__":
             args.task_arns,
             args.reason
         )
+    else:
+        logger.info("No action specified for JenkinsContainerManager")
