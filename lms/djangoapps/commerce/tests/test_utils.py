@@ -2,6 +2,7 @@
 import json
 import unittest
 from urllib import urlencode
+from uuid import uuid4
 
 import ddt
 import httpretty
@@ -122,11 +123,11 @@ class EcommerceServiceTests(TestCase):
         },
         {
             'skus': ['TESTSKU'],
-            'program_uuid': '12345678-9012-3456-7890-123456789012'
+            'program_uuid': str(uuid4())
         },
         {
             'skus': ['TESTSKU1', 'TESTSKU2', 'TESTSKU3'],
-            'program_uuid': '12345678-9012-3456-7890-123456789012'
+            'program_uuid': str(uuid4())
         }
     )
     def test_get_checkout_page_url(self, skus, program_uuid=None):
@@ -143,6 +144,38 @@ class EcommerceServiceTests(TestCase):
                 expected_url=expected_url,
                 program_uuid=program_uuid
             )
+        self.assertEqual(url, expected_url)
+
+    @override_settings(ECOMMERCE_PUBLIC_URL_ROOT='http://ecommerce_url')
+    @ddt.data(
+        {
+            'skus': ['TESTSKU'],
+            'enterprise_catalog_uuid': None
+        },
+        {
+            'skus': ['TESTSKU'],
+            'enterprise_catalog_uuid': str(uuid4())
+        },
+    )
+    @ddt.unpack
+    def test_get_checkout_page_url_with_enterprise_catalog_uuid(self, skus, enterprise_catalog_uuid):
+        """ Verify the checkout page URL is properly constructed and returned. """
+        url = EcommerceService().get_checkout_page_url(
+            *skus,
+            enterprise_customer_catalog_uuid=enterprise_catalog_uuid
+        )
+        config = CommerceConfiguration.current()
+
+        query = {'sku': skus}
+        if enterprise_catalog_uuid:
+            query.update({'enterprise_customer_catalog_uuid': enterprise_catalog_uuid})
+
+        expected_url = '{root}{basket_url}?{skus}'.format(
+            basket_url=config.basket_checkout_page,
+            root=settings.ECOMMERCE_PUBLIC_URL_ROOT,
+            skus=urlencode(query, doseq=True),
+        )
+
         self.assertEqual(url, expected_url)
 
 
