@@ -31,13 +31,15 @@ from student.models import (
 log = logging.getLogger(__name__)
 
 
-def get_course_enrollments(user_id):
+def get_course_enrollments(user_id, is_support_request=False):
     """Retrieve a list representing all aggregated data for a user's course enrollments.
 
     Construct a representation of all course enrollment data for a specific user.
 
     Args:
         user_id (str): The name of the user to retrieve course enrollment information for.
+        is_support_request (bool): Determines whether this request is comming from support tool.
+
 
     Returns:
         A serializable list of dictionaries of all aggregated enrollment data for a user.
@@ -45,8 +47,10 @@ def get_course_enrollments(user_id):
     """
     qset = CourseEnrollment.objects.filter(
         user__username=user_id,
-        is_active=True
     ).order_by('created')
+
+    if not is_support_request:
+        qset = qset.filter(is_active=True)
 
     enrollments = CourseEnrollmentSerializer(qset, many=True).data
 
