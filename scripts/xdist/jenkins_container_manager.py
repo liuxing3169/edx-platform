@@ -20,9 +20,8 @@ class JenkinsContainerManager():
 
     def spin_up_containers(self, number_of_containers, task_name, subnets, security_groups, public_ip_enabled, launch_type):
         """
-        Spins up jenkins-worker containers.
+        Spins up jenkins-worker containers and generates a .txt file containing their IP addresses.
         """
-        logger.info(security_groups)
         CONTAINER_RUN_TIME_OUT_MINUTES = 10
         MAX_RUN_TASK_RETRIES = 7
 
@@ -71,13 +70,16 @@ class JenkinsContainerManager():
             for task_response in response['tasks']:
                 task_arns.append(task_response['taskArn'])
 
-        still_running = task_arns; not_running = []; all_running = False
+        still_running = task_arns; not_running = []; ip_addresses = []; all_running = False
         for attempt in range(0, CONTAINER_RUN_TIME_OUT_MINUTES*2):
             time.sleep(30)
             list_tasks_response = self.ecs.describe_tasks(cluster=self.cluster_name, tasks=still_running)['tasks']
             del not_running[:]
             for counter, task_response in enumerate(list_tasks_response):
-                if task_response['lastStatus'] != 'RUNNING':
+                if task_response['lastStatus'] == 'RUNNING':
+                    for container in task_response['containers']:
+                        ip_addresses.append(container["networkInterfaces"][0]["privateIpv4Address"])
+                else:
                     not_running.append(task_response['taskArn'])
 
             if not_running:
@@ -92,10 +94,18 @@ class JenkinsContainerManager():
                 "Timed out waiting to spin up all containers."
             )
 
+        ip_list_file = open("jenkins_container_ip_list.txt", "w")
+        ip_list_file.write(" ".join(ip_addresses))
+        ip_list_file.close()
+
+        task_arn_file = open("jenkins_container_task_arns.txt", "w")
+        task_arn_file.write(" ".join(task_arns))
+        task_arn_file.close()
+
 
     def terminate_containers(self, task_arns, reason):
         """
-        Terminates jenkins-worker containers.
+        Terminates jenkins-worker containers based on a list of task_arns.
         """
         for task_arn in task_arns:
             response = self.ecs.stop_task(
@@ -114,7 +124,7 @@ if __name__ == "__main__":
     parser.add_argument('--region', '-g', default='us-east-1',
                         help="AWS region where ECS infrastructure lives. Defaults to us-east-1")
 
-    parser.add_argument('--cluster', '-c', default=None,
+    parser.add_argument('--cluster', '-c', default="jenkins-worker-containers",
                         help="AWS Cluster name where the containers live. Defaults to"
                         "the testeng cluster: jenkins-worker-containers")
 
@@ -145,7 +155,7 @@ if __name__ == "__main__":
     parser.add_argument('--task_arns', '-arns', nargs='+', default=None,
                         help="Task arns to terminate")
 
-    parser.add_argument('--reason', '-r', default="",
+    parser.add_argument('--reason', '-r', default="Finished executing tests",
                         help="Reason for terminating containers")
 
     args = parser.parse_args()
