@@ -20,7 +20,8 @@ class JenkinsContainerManager():
 
     def spin_up_containers(self, number_of_containers, task_name, subnets, security_groups, public_ip_enabled, launch_type):
         """
-        Spins up jenkins-worker containers and generates a .txt file containing their IP addresses.
+        Spins up jenkins-worker containers and generates two .txt files, one containing the IP
+        addresses of the new containers, the other containing their task_arns.
         """
         CONTAINER_RUN_TIME_OUT_MINUTES = 10
         MAX_RUN_TASK_RETRIES = 7
