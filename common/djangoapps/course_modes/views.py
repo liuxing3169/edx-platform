@@ -9,13 +9,13 @@ import urllib
 import waffle
 from babel.dates import format_datetime
 from django.contrib.auth.decorators import login_required
-from django.urls import reverse
 from django.db import transaction
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.shortcuts import redirect
+from django.urls import reverse
 from django.utils.decorators import method_decorator
-from django.utils.translation import ugettext as _
 from django.utils.translation import get_language, to_locale
+from django.utils.translation import ugettext as _
 from django.views.generic.base import View
 from ipware.ip import get_ip
 from opaque_keys.edx.keys import CourseKey
@@ -29,6 +29,7 @@ from lms.djangoapps.experiments.utils import get_experiment_user_metadata_contex
 from openedx.core.djangoapps.catalog.utils import get_currency_data
 from openedx.core.djangoapps.embargo import api as embargo_api
 from student.models import CourseEnrollment
+from student.signals import SAILTHRU_AUDIT_PURCHASE
 from util.db import outer_atomic
 from xmodule.modulestore.django import modulestore
 
@@ -236,6 +237,9 @@ class ChooseModeView(View):
             # system, such as third-party discovery.  These workflows result in learners arriving
             # directly at this screen, and they will not necessarily be pre-enrolled in the audit mode.
             CourseEnrollment.enroll(request.user, course_key, CourseMode.AUDIT)
+            SAILTHRU_AUDIT_PURCHASE.send(
+                sender=None, event='enroll', user=user, mode=requested_mode, course_id=course_key
+            )
             # If the course has started redirect to course home instead
             if course.has_started():
                 return redirect(reverse('openedx.course_experience.course_home', kwargs={'course_id': course_key}))
